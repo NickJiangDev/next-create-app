@@ -1,0 +1,56 @@
+{
+  "name": "next-create-app",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=18.18.0"
+  },
+  "browserslist": [
+    "defaults",
+    "not IE 11"
+  ],
+  "scripts": {
+    "dev": "bash src/scripts/use-env.sh local && next dev",
+    "dev:dev": "bash src/scripts/use-env.sh development && next dev",
+    "dev:prod": "bash src/scripts/use-env.sh production && next dev",
+    "build": "next build",
+    "start": "next start",
+    "env:use": "bash src/scripts/use-env.sh",
+    "db:migrate": "npx tsx src/scripts/migrate.ts local",
+    "db:migrate:dev": "npx tsx src/scripts/migrate.ts development",
+    "db:migrate:prod": "npx tsx src/scripts/migrate.ts production",
+    "vercel:sync": "npx tsx src/scripts/vercel-sync.ts",
+    "vercel:deploy": "npx tsx src/scripts/vercel-deploy.ts",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,tsx,js,jsx,mjs}": "eslint --fix"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.19.1",
+    "next": "16.1.6",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "babel-plugin-react-compiler": "1.0.0",
+    "dotenv": "^17.3.1",
+    "eslint": "^9",
+    "eslint-config-next": "16.1.6",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.3.3",
+    "tailwindcss": "^4",
+    "tsx": "^4.21.0",
+    "typescript": "^5"
+  }
+}

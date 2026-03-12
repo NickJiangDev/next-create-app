@@ -1,0 +1,199 @@
+@import "tailwindcss";
+
+@theme {
+  /* --- Dark Fitness Palette --- */
+  --color-primary: #8B5CF6;
+  --color-primary-light: #A78BFA;
+  --color-primary-dark: #6D28D9;
+  --color-cta: #10B981;
+  --color-cta-light: #34D399;
+  --color-cta-dark: #059669;
+  --color-accent-orange: #F97316;
+  --color-accent-pink: #EC4899;
+  --color-accent-cyan: #06B6D4;
+  --color-accent-lime: #84CC16;
+  --color-accent-red: #EF4444;
+  --color-bg: #0A0A0F;
+  --color-bg-card: #141420;
+  --color-bg-elevated: #1C1C2E;
+  --color-text: #F1F5F9;
+  --color-text-muted: #94A3B8;
+  --color-text-dim: #64748B;
+  --color-surface: #141420;
+  --color-border: rgba(139, 92, 246, 0.15);
+  --color-border-subtle: rgba(255, 255, 255, 0.06);
+  --font-heading: "Inter", "Noto Sans SC", system-ui, sans-serif;
+  --font-body: "Inter", "Noto Sans SC", system-ui, sans-serif;
+}
+
+html {
+  color-scheme: dark;
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-tap-highlight-color: rgba(139, 92, 246, 0.15);
+  overflow: hidden;
+  height: 100vh;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  text-wrap: balance;
+}
+
+/* ---- Dark Card ---- */
+.card {
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out, border-color 150ms ease-out;
+}
+
+.card:hover {
+  border-color: var(--color-border);
+  box-shadow: 0 8px 32px rgba(139, 92, 246, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: transform 150ms ease-out, box-shadow 150ms ease-out, opacity 150ms ease-out;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-cta), var(--color-cta-light));
+  color: #fff;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 4px 20px rgba(16, 185, 129, 0.35);
+}
+
+.btn-secondary {
+  background: var(--color-bg-elevated);
+  color: var(--color-text);
+  border: 1px solid var(--color-border-subtle);
+}
+
+.btn-secondary:hover {
+  border-color: var(--color-border);
+  background: rgba(139, 92, 246, 0.08);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-text-muted);
+  box-shadow: none;
+}
+
+.btn-ghost:hover {
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: none;
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--color-accent-red);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.btn-danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.35);
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.15);
+}
+
+/* ---- Inputs ---- */
+.input {
+  background: var(--color-bg-elevated);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: 12px;
+  color: var(--color-text);
+  transition: border-color 150ms ease-out, box-shadow 150ms ease-out;
+}
+
+.input::placeholder {
+  color: var(--color-text-dim);
+}
+
+.input:focus-visible {
+  outline: 2px solid var(--color-primary-light);
+  outline-offset: 2px;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+.input:focus:not(:focus-visible) {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+}
+
+/* ---- Glow Utilities ---- */
+.glow-primary { box-shadow: 0 0 20px rgba(139, 92, 246, 0.3); }
+.glow-cta { box-shadow: 0 0 20px rgba(16, 185, 129, 0.3); }
+
+@media (prefers-reduced-motion: reduce) {
+  .card, .btn, .input {
+    transition: none;
+  }
+  .card:hover, .btn:hover, .btn:active {
+    transform: none;
+  }
+}
+
+/* ---- Chat scrollbar ---- */
+.chat-messages {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.chat-messages:hover {
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+}
+
+.chat-messages:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
