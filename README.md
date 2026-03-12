@@ -1,6 +1,8 @@
 # next-create-app
 
-AI 全栈脚手架 — Next.js 16 + MySQL/OceanBase + 阿里云千问 SSE 流式对话。
+AI 全栈脚手架 — Next.js 16 + MySQL/OceanBase + OpenAI 兼容接口 SSE 流式对话。
+
+支持接入任意 OpenAI 兼容的 AI 服务（通义千问、OpenAI、火山引擎/豆包、DeepSeek、Moonshot 等），只需修改环境变量即可切换。
 
 可扩展为 AI 客服、AI 知识库、AI 电商 Agent、ToB 中台管理系统等。
 
@@ -13,32 +15,41 @@ AI 全栈脚手架 — Next.js 16 + MySQL/OceanBase + 阿里云千问 SSE 流式
 | 数据库 | MySQL / OceanBase (mysql2) |
 | 认证 | JWT (HttpOnly Cookie) |
 | 校验 | Zod v4 |
-| AI | 阿里云千问 (OpenAI 兼容接口, SSE 流式) |
-| 部署 | Vercel / Docker (standalone output) |
+| AI | OpenAI 兼容接口 (SSE 流式) |
+| 部署 | Docker / Vercel (standalone output) |
 
 ## 前置条件
 
-- Node.js >= 20
+- Node.js >= 18.18.0
 - pnpm >= 9
 - MySQL >= 5.7（仅本地开发需要，连远程库无需本地 MySQL）
 
 ## 环境配置
 
-项目采用"完整配置文件 + 启动时复制"的策略：
+项目采用多环境配置文件，启动时自动切换：
 
 | 文件 | 用途 |
 |------|------|
 | `.env.local.env` | 本地 MySQL 完整配置 |
 | `.env.development.env` | 远程 dev 库完整配置 |
 | `.env.production.env` | 远程 prod 库完整配置 |
-| `.env` | **运行时配置**（启动时自动生成，不手动维护） |
-| `.env.vercel` | Vercel Token（可选，避免每次命令行传入） |
+| `.env` | **运行时配置**（启动时自动生成，无需手动维护） |
 
-每个环境文件包含所有变量（数据库、JWT、AI 等），启动命令会自动将对应文件复制到 `.env`。
+启动命令（`pnpm dev` / `pnpm dev:dev` / `pnpm dev:prod`）会自动将对应环境文件复制到 `.env`，无需手动切换。
 
-如果对应的环境文件不存在，则直接使用已有的 `.env`。
+`pnpm env:use <local|development|production>` 仅用于不通过启动命令、需要单独切换环境的场景（如单独跑迁移脚本前）。
 
 参考 `.env.example` 创建你的环境文件。
+
+### AI 服务配置
+
+项目通过 OpenAI 兼容接口调用 AI 服务，修改以下三个变量即可切换厂商：
+
+```bash
+AI_API_KEY=your_api_key
+AI_BASE_URL=https://api.example.com/v1
+AI_MODEL=model-name
+```
 
 ## 快速开始
 
@@ -51,34 +62,21 @@ pnpm install
 ### 2. 创建环境文件
 
 ```bash
-# 复制模板，按需修改
 cp .env.example .env.local.env
+# 按需修改数据库和 AI 配置
 ```
 
 ### 3. 启动开发
 
 ```bash
-# 连接本地 MySQL
-pnpm dev
-
-# 连接远程 dev 数据库
-pnpm dev:dev
-
-# 连接远程 prod 数据库
-pnpm dev:prod
+pnpm dev          # 连接本地 MySQL
+pnpm dev:dev      # 连接远程 dev 数据库
+pnpm dev:prod     # 连接远程 prod 数据库
 ```
 
 首次请求 API 时自动建表，无需手动操作数据库。
 
-### 4. 手动切换环境
-
-```bash
-pnpm env:use local
-pnpm env:use development
-pnpm env:use production
-```
-
-### 5. 数据库迁移
+### 4. 数据库迁移
 
 ```bash
 pnpm db:migrate          # 本地库
@@ -86,64 +84,52 @@ pnpm db:migrate:dev      # 远程 dev 库
 pnpm db:migrate:prod     # 远程 prod 库
 ```
 
-## 环境切换原理
-
-```
-pnpm dev       →  .env.local.env       → 复制到 .env → 启动 Next.js
-pnpm dev:dev   →  .env.development.env → 复制到 .env → 启动 Next.js
-pnpm dev:prod  →  .env.production.env  → 复制到 .env → 启动 Next.js
-```
-
-如果对应环境文件不存在，直接使用已有的 `.env`，不会报错。
-
 ## 部署
 
-### Vercel（推荐）
+### Docker（推荐）
 
-Vercel 线上构建时不依赖任何 `.env` 文件，环境变量通过 Vercel Dashboard 或 `vercel:sync` 命令写入 Vercel 平台，构建时自动注入 `process.env`。
+多阶段构建，镜像精简，适合自托管和企业内部部署。
 
-本地的 `.env.production.env` 仅用于：
-- `vercel:init` / `vercel:sync` 同步变量到 Vercel
-- `vercel:check` 校验变量是否齐全
-- `pnpm dev:prod` 本地连线上库调试
-
-#### 前置条件
-
-- Vercel 账号
-- Vercel API Token：Dashboard → Settings → Tokens → Create Token
-
-在项目根目录创建 `.env.vercel` 文件写入 `VERCEL_TOKEN=xxx`，之后所有 vercel 命令自动读取。
-
-#### 首次配置
-
-```bash
-# 1. 链接 Vercel 项目（只需一次）
-npx vercel link
-
-# 2. 同步环境变量到 Vercel
-pnpm vercel:sync
-```
-
-#### 后续环境变量变更
-
-修改了 `.env.production.env` 后：
-
-```bash
-pnpm vercel:sync
-```
-
-#### 手动部署
-
-```bash
-pnpm vercel:deploy
-```
-
-### Docker
+#### 本地构建
 
 ```bash
 docker build -t next-create-app .
 docker run -p 3000:3000 --env-file .env.production.env next-create-app
 ```
+
+#### CI/CD 自动构建
+
+项目配置了 GitHub Actions（`.github/workflows/docker.yml`），推送到 main 分支或打 tag 时自动构建并推送镜像到 ghcr.io：
+
+- push main → `ghcr.io/<owner>/next-create-app:main`
+- tag v1.0.0 → `ghcr.io/<owner>/next-create-app:1.0.0`
+- PR → 仅构建验证，不推送
+
+如需推送到公司内部镜像仓库，修改 workflow 中的 `REGISTRY` 和登录凭证即可。
+
+#### 生产运行
+
+```bash
+docker run -p 3000:3000 \
+  -e DATABASE_URL=mysql://user:pass@host:3306/dbname \
+  -e JWT_SECRET=your_secret \
+  -e AI_API_KEY=your_key \
+  -e AI_BASE_URL=https://api.example.com/v1 \
+  -e AI_MODEL=model-name \
+  next-create-app
+```
+
+### Vercel（可选）
+
+也支持 Vercel 部署，环境变量通过 Vercel Dashboard 或 `vercel:sync` 命令写入平台。
+
+```bash
+npx vercel link              # 链接项目（只需一次）
+pnpm vercel:sync             # 同步环境变量
+pnpm vercel:deploy           # 手动部署（可选）
+```
+
+Vercel 相关配置需要在项目根目录创建 `.env.vercel` 写入 `VERCEL_TOKEN=xxx`。
 
 ## API 接口
 
@@ -204,3 +190,4 @@ src/
 | `pnpm vercel:sync` | 同步环境变量到 Vercel |
 | `pnpm vercel:deploy` | 手动触发部署 |
 | `pnpm lint` | ESLint 检查 |
+| `pnpm lint:fix` | ESLint 自动修复 |
